@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# RepoMind workspace data (generated per-repo)
+.repomind/
+
+# ChromaDB
+chroma/
+
+# Old codechat artifacts
+.codechat/
+
+# Misc
+*.log
+implementation_plan.md
+taskcode.md

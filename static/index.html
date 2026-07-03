@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RepoMind — AI Codebase Understanding</title>
+  <meta name="description" content="Deep AI-powered repository understanding, code generation, and analysis">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header id="app-header">
+    <div class="header-brand">
+      <div class="brand-icon">🧠</div>
+      <h1>Repo<span class="brand-accent">Mind</span></h1>
+    </div>
+    <div class="header-center">
+      <input type="text" id="repo-path-input" placeholder="Enter repository path..." autocomplete="off">
+      <button id="open-repo-btn" class="btn btn-primary">Open</button>
+    </div>
+    <div class="header-actions">
+      <button id="settings-btn" class="btn btn-ghost" title="Settings">⚙️</button>
+    </div>
+  </header>
+
+  <div id="app-container">
+    <aside id="sidebar">
+      <div class="sidebar-section">
+        <h3>Workspace</h3>
+        <div id="workspace-info" class="info-card">
+          <div class="info-item"><span class="label">Status</span><span id="ws-status" class="badge badge-idle">No repo</span></div>
+          <div class="info-item"><span class="label">Indexed</span><span id="ws-indexed" class="badge">—</span></div>
+          <div class="info-item"><span class="label">Analyzed</span><span id="ws-analyzed" class="badge">—</span></div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>Actions</h3>
+        <div class="action-buttons">
+          <button id="index-btn" class="btn btn-action" disabled>📦 Index</button>
+          <button id="analyze-btn" class="btn btn-action btn-analyze" disabled>🧠 Analyze</button>
+        </div>
+        <div id="analysis-progress" class="progress-panel" style="display:none;">
+          <div class="progress-phase" id="progress-phase">Idle</div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+          </div>
+          <div class="progress-detail" id="progress-detail"></div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>Stats</h3>
+        <div id="stats-panel" class="info-card">
+          <div class="info-item"><span class="label">Local</span><span id="stat-local">0</span></div>
+          <div class="info-item"><span class="label">Cloud</span><span id="stat-cloud">0</span></div>
+          <div class="info-item"><span class="label">Saved</span><span id="stat-saved">$0.00</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <main id="main-content">
+      <div class="tab-bar">
+        <button class="tab active" data-tab="chat">💬 Chat</button>
+        <button class="tab" data-tab="understand">🧠 Understanding</button>
+        <button class="tab" data-tab="generate">✨ Generate</button>
+      </div>
+
+      <!-- Chat Tab -->
+      <div class="tab-content active" id="tab-chat">
+        <div id="chat-messages" class="chat-messages">
+          <div class="welcome-message">
+            <div class="welcome-icon">🧠</div>
+            <h2>Welcome to RepoMind</h2>
+            <p>Open a repository, index it, then ask questions about the codebase.</p>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="route-indicator" id="route-indicator">🟢 auto</div>
+          <textarea id="chat-input" placeholder="Ask about the codebase..." rows="2"></textarea>
+          <button id="send-btn" class="btn btn-primary btn-send" disabled>Send</button>
+        </div>
+      </div>
+
+      <!-- Understanding Tab -->
+      <div class="tab-content" id="tab-understand">
+        <div id="understand-empty" class="empty-state">
+          <div class="empty-icon">🔬</div>
+          <h3>No Analysis Yet</h3>
+          <p>Click "Analyze" in the sidebar to deeply understand this repository.</p>
+        </div>
+        <div id="understand-content" style="display:none;">
+          <div class="understand-grid">
+            <div class="overview-card glass-card">
+              <h3>📋 Project Overview</h3>
+              <div id="project-summary"></div>
+              <div id="tech-stack" class="tag-list"></div>
+            </div>
+            <div class="architecture-card glass-card">
+              <h3>🏗️ Architecture</h3>
+              <div id="architecture-info"></div>
+              <div id="entry-points"></div>
+            </div>
+          </div>
+          <div class="understand-grid">
+            <div class="patterns-card glass-card">
+              <h3>🔄 Patterns</h3>
+              <div id="patterns-list"></div>
+            </div>
+            <div class="repomap-card glass-card">
+              <h3>🗺️ Repo Map</h3>
+              <pre id="repo-map" class="repo-map-content"></pre>
+            </div>
+          </div>
+          <div class="file-browser glass-card">
+            <h3>📁 File Browser</h3>
+            <div id="file-tree"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate Tab -->
+      <div class="tab-content" id="tab-generate">
+        <div class="generate-form glass-card">
+          <h3>✨ Generate Code</h3>
+          <textarea id="gen-description" placeholder="Describe what you want to generate..." rows="3"></textarea>
+          <input type="text" id="gen-target" placeholder="Target path (optional)">
+          <button id="gen-btn" class="btn btn-primary" disabled>Generate</button>
+        </div>
+        <div id="gen-result" class="gen-result glass-card" style="display:none;">
+          <h3>Generated Code</h3>
+          <div id="gen-file-path" class="gen-path"></div>
+          <pre id="gen-code" class="code-block"></pre>
+          <div id="gen-explanation"></div>
+        </div>
+        <div class="suggestions-card glass-card">
+          <h3>💡 Improvement Suggestions</h3>
+          <button id="suggestions-btn" class="btn btn-ghost" disabled>Load Suggestions</button>
+          <div id="suggestions-list"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal" style="display:none;">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h2>⚙️ Settings</h2>
+        <button id="close-settings" class="btn btn-ghost">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-group">
+          <h4>Local LLM</h4>
+          <label>Backend<select id="set-backend"><option value="ollama">Ollama</option><option value="lmstudio">LM Studio</option></select></label>
+          <label>Ollama Host<input type="text" id="set-ollama-host"></label>
+          <label>Chat Model<input type="text" id="set-chat-model"></label>
+          <label>Embed Model<input type="text" id="set-embed-model"></label>
+        </div>
+        <div class="settings-group">
+          <h4>Cloud Providers</h4>
+          <div id="provider-settings"></div>
+        </div>
+        <div class="settings-group">
+          <h4>Routing</h4>
+          <label>Default Provider<select id="set-escalation"></select></label>
+          <label>Default Mode<select id="set-mode"><option value="auto">Auto</option><option value="local_only">Local Only</option><option value="escalate_only">Cloud Only</option></select></label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="save-settings" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
