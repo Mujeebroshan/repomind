@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "repomind"
@@ -32,3 +32,9 @@ dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
 
 [project.scripts]
 repomind = "repomind.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["repomind*"]
+
+[tool.setuptools.package-data]
+repomind = ["../static/*"]
