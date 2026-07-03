@@ -153,8 +153,15 @@ class DependencyGraph:
             for nid, score in pr.items():
                 if nid in self._nodes:
                     self._nodes[nid].pagerank = score
-        except nx.NetworkXError:
-            pass
+        except (nx.NetworkXError, ModuleNotFoundError):
+            # scipy not installed — fall back to degree centrality
+            try:
+                dc = nx.degree_centrality(self._graph)
+                for nid, score in dc.items():
+                    if nid in self._nodes:
+                        self._nodes[nid].pagerank = score
+            except Exception:
+                pass
 
     # ── Query ──────────────────────────────────────────────────────────
 
